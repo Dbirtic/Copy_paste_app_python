@@ -13,24 +13,28 @@ def click():
     output.insert(END, definition)
 window = tkinter.Tk()
 window.title("Window")
+
+# adjust window/frame size
+window.geometry("600x600")
+
 frm = ttk.Frame(window, padding=10)
 frm.grid()
 
 # create label
 ttk.Label(frm, text="Hi man!", font="none 12").grid(row=0, column=0, sticky=tkinter.E)
-ttk.Button(frm, text="Quit", command=window.destroy).grid(column=1, row=1)
+ttk.Button(frm, text="Quit", command=window.destroy).grid(column=0, row=3)
 # create a text entry box
 textentry = Entry(frm, width=20, bg="white")
 textentry.grid(row=2, column=0, sticky=tkinter.W)
 
 # add a submit button
-Button(window, text="SUBMIT", width=6, command=click).grid(row=3, column=3, sticky=tkinter.W)
+Button(window, text="SUBMIT", width=6, command=click).grid(row=3, column=0)
 
 # create another label
 ttk.Label(frm, text="\nDefinition:", font="none 12 bold").grid(row=4, column=0, sticky=tkinter.W)
 
 # create a text box
-output = tkinter.Text(frm, width=75, height=6, wrap="word")
+output = tkinter.Text(frm, width=50, height=6, wrap="word")
 output.grid(row=5, column=0, columnspan=2, sticky=tkinter.W)
 
 # the dictionary
