@@ -1,10 +1,10 @@
-1 - Stinkfist - Tool
-2 - Schism - Tool
-3 - Pushit - Tool
-4 - Got me wrong - Alice in Chains
-5 - The one you know - Alice in Chains
-6 - Love Hate love - Alice in Chains
-7 - Man in the box - Alice in Chains
-8 - Bleed the freak - Alice in Chains
-9 - Scars - Papa Roach
-10 - Freedom - Rage Against the Machine 
+1 - Stinkfist - Tool - ænima
+2 - Schism - Tool - Lateralus
+3 - Pushit - Tool - ænima
+4 - Got me wrong - Alice in Chains - Sap
+5 - The one you know - Alice in Chains - Rainier Fog
+6 - Love Hate love - Alice in Chains - Facelift
+7 - Man in the box - Alice in Chains - Facelift
+8 - Bleed the freak - Alice in Chains - Facelift
+9 - Scars - Papa Roach - Getting Away With Murder
+10 - Freedom - Rage Against the Machine - Rage Against The Machine
