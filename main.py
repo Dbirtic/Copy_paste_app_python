@@ -21,6 +21,8 @@ def search_folder(destination):
                     # make temporary path for the artist
                     temp_path = Path(main_root + "/" + dir).as_posix()
                     print(temp_path)
+                    #print(f'dir: {dir}')
+                    #print(f'dirs: {dirs}')
                     for root2, dirs2, files2 in os.walk(temp_path):
                         # go into artist folder and find songs
                         for file in files2:
@@ -47,7 +49,7 @@ def search_folder(destination):
                                             # add song to the list, create a path and copy to destination
                                             
                                             temp_path2 = Path(root2 + "/" + file).as_posix()
-                                            path_to_song = check_ablum_in_path(albums, temp_path2)
+                                            path_to_song = check_album_in_path(albums, temp_path2)
 
                                             if path_to_song == None:
                                                 continue
@@ -60,23 +62,47 @@ def search_folder(destination):
                                 temp3 = temp2.group(0)
                                 if temp3.startswith("0") or temp3.startswith("1"):
                                     temp4 = temp3[2:].strip()
-                                    print(f'temp4: {temp4}')
                                     if temp4.startswith(".") or temp4.startswith("- "):
-                                        pass
-                                        # continue tomorrow
+                                        temp6 = temp4[1:]
+                                        temp7 = temp6.removesuffix(".mp3")
+                                        if temp7.lower() in songs_list:
+                                            temp_path2 = Path(root2 + "/" + file).as_posix()
+                                            path_to_song = check_album_in_path(albums, temp_path2)
+
+                                            if path_to_song == None:
+                                                continue
+                                            else:
+                                                shutil.copy(path_to_song, destination)
+                                                song_name = temp7
+                                                rename_songs(file, song_name, destination, "P:\Git\Copy_Paste_app_python\Copy_paste_app_python\song_list.txt")
+                                    else:
+                                        temp5 = temp4.removesuffix(".mp3")
+                                        #print(f'temp5: {temp5}\nsongs_list: {songs_list}')
+                                        if temp5.lower() in songs_list:
+                                            temp_path2 = Path(root2 + "/" + file).as_posix()
+                                            path_to_song = check_album_in_path(albums, temp_path2)
+                                            #print(f'path_to_song: {path_to_song}')
+                                            if path_to_song == None or "Disk" in path_to_song:
+                                                continue
+                                            else:
+                                                #print(f"else when song has only number - {temp5}")
+                                                #print(f'temp7: {temp5}\npath_to_song: {path_to_song}\ntemp_path2: {temp_path2}')
+                                                #print(f'artists: {artists}\nalbums: {albums}')
+                                                shutil.copy(path_to_song, destination)
+                                                song_name = temp5.lower()
+                                                rename_songs(file, song_name, destination, "P:\Git\Copy_Paste_app_python\Copy_paste_app_python\song_list.txt")
                                 if temp4.startswith("- "):
                                     temp5 = temp4[1:].strip()
-                                    #print(f'temp5: {temp5}')
                                     temp6 = temp5.removesuffix(".mp3")
-                                    if temp6 in songs_list:
+                                    if temp6.lower() in songs_list:
                                         temp_path2 = Path(root2 + "/" + file).as_posix()
-                                        path_to_song = check_ablum_in_path(albums, temp_path2)
+                                        path_to_song = check_album_in_path(albums, temp_path2)
 
                                         if path_to_song == None:
                                             continue
                                         else:
                                             shutil.copy(path_to_song, destination)
-                                            song_name = temp6
+                                            song_name = temp6.lower()
                                             rename_songs(file, song_name, destination, "P:\Git\Copy_Paste_app_python\Copy_paste_app_python\song_list.txt")
 
 # TODO:
@@ -108,7 +134,7 @@ def songs_lower(songs):
         songs_list.append(i.lower())
     return songs_list
 
-def check_ablum_in_path(albums, path):
+def check_album_in_path(albums, path):
     for album in albums:
         if "Ã¦nima" in album:
             album = "ænima"
@@ -122,7 +148,10 @@ def rename_songs(old_name, song_name, destination, song_path):
         for line in songs:
             if song_name in line.lower():
                 new_name = line.removesuffix("\n")
-                os.rename(destination + '\\' + old_name, destination + '\\' + new_name + ".mp3")
+                if os.path.isfile(destination + '\\' + new_name + ".mp3"):
+                    os.remove(destination + '\\' + old_name)
+                else:
+                    os.rename(destination + '\\' + old_name, destination + '\\' + new_name + ".mp3")
             else:
                 continue
 
