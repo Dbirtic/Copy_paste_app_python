@@ -1,4 +1,5 @@
 import os
+import argparse
 from pkgutil import extend_path
 import sys
 import re
@@ -9,20 +10,41 @@ from pathlib import Path
 SOUND_FILE = re.compile(r'(.*(mp3|m4a|wav))')
 SONG = re.compile(r'(?!\d+)(?!(-|\s-\s)).*')
 
-def search_folder(destination):
+# argument parser
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "-d",
+    "--destination", 
+    type=str, 
+    required=True, 
+    help="destination to folder where the songs will be copies"
+)
+parser.add_argument(
+    "-l",
+    "--songlist",
+    type=str,
+    required=True,
+    help="path to the song list"
+)
+
+def search_folder(destination, song_list):
+    '''
+    This function takes end folder where the music is stored and list of songs
+     to be copied. It parses the song list and copies the songs to the folder
+     which was given. After copying it renames the copied files to the names
+     given in the song list.
+    '''
+
     main_root = "E:\Glazba"
-    songs, artists, albums = parse_song_list("P:\Git\Copy_Paste_app_python\Copy_paste_app_python\song_list.txt")
+    songs, artists, albums = parse_song_list(song_list) #"P:\Git\Copy_Paste_app_python\Copy_paste_app_python\song_list.txt"
     songs_list = songs_lower(songs)
-    music_list = []
     if os.path.isdir(main_root):
-        for root, dirs, files in os.walk("E:\Glazba"):
+        for root, dirs, files in os.walk("E:\Glazba"): #"E:\Glazba"
             for dir in dirs:
                 if dir in artists:
                     # make temporary path for the artist
                     temp_path = Path(main_root + "/" + dir).as_posix()
                     print(temp_path)
-                    #print(f'dir: {dir}')
-                    #print(f'dirs: {dirs}')
                     for root2, dirs2, files2 in os.walk(temp_path):
                         # go into artist folder and find songs
                         for file in files2:
@@ -58,7 +80,6 @@ def search_folder(destination):
                                                 song_name = temp8
                                                 rename_songs(file, song_name, destination, "P:\Git\Copy_Paste_app_python\Copy_paste_app_python\song_list.txt")
                             elif temp2 := SOUND_FILE.search(file):
-                                #print(f'temp2: {temp2.group(0)}')
                                 temp3 = temp2.group(0)
                                 if temp3.startswith("0") or temp3.startswith("1"):
                                     temp4 = temp3[2:].strip()
@@ -77,17 +98,12 @@ def search_folder(destination):
                                                 rename_songs(file, song_name, destination, "P:\Git\Copy_Paste_app_python\Copy_paste_app_python\song_list.txt")
                                     else:
                                         temp5 = temp4.removesuffix(".mp3")
-                                        #print(f'temp5: {temp5}\nsongs_list: {songs_list}')
                                         if temp5.lower() in songs_list:
                                             temp_path2 = Path(root2 + "/" + file).as_posix()
                                             path_to_song = check_album_in_path(albums, temp_path2)
-                                            #print(f'path_to_song: {path_to_song}')
                                             if path_to_song == None or "Disk" in path_to_song:
                                                 continue
                                             else:
-                                                #print(f"else when song has only number - {temp5}")
-                                                #print(f'temp7: {temp5}\npath_to_song: {path_to_song}\ntemp_path2: {temp_path2}')
-                                                #print(f'artists: {artists}\nalbums: {albums}')
                                                 shutil.copy(path_to_song, destination)
                                                 song_name = temp5.lower()
                                                 rename_songs(file, song_name, destination, "P:\Git\Copy_Paste_app_python\Copy_paste_app_python\song_list.txt")
@@ -105,11 +121,11 @@ def search_folder(destination):
                                             song_name = temp6.lower()
                                             rename_songs(file, song_name, destination, "P:\Git\Copy_Paste_app_python\Copy_paste_app_python\song_list.txt")
 
-# TODO:
-# napraviti popis_pjesama.txt +
-
-# napraviti parser funkciju i spreminiti i vratiti popis pjesama i izvođača +
 def parse_song_list(song_path):
+    '''
+    Takes a path to the song list and parses the names of the songs, artists
+    and albums and returns them.
+    '''
     song_list = []
     artist_list = []
     album_list = []
@@ -129,12 +145,19 @@ def parse_song_list(song_path):
     return song_list, artist_list, album_list
 
 def songs_lower(songs):
+    '''
+    Takes a list of songs and makes every string in the list lowercase.
+    '''
     songs_list = []
     for i in songs:
         songs_list.append(i.lower())
     return songs_list
 
 def check_album_in_path(albums, path):
+    '''
+    This function takes list of albums and a path where the song was found.
+    It returns the path if the album is found in the path.
+    '''
     for album in albums:
         if "Ã¦nima" in album:
             album = "ænima"
@@ -144,6 +167,12 @@ def check_album_in_path(albums, path):
             pass
     
 def rename_songs(old_name, song_name, destination, song_path):
+    '''
+    Takes the song name from the src, song names from the list, destination
+    where the song will be copied and the song list. If the song name is found
+    in the song list then it will be copied with the new name. If there is a
+    song with the same name there then remove it since it'll be copied.
+    '''
     with open(song_path, 'r') as songs:
         for line in songs:
             if song_name in line.lower():
@@ -155,12 +184,18 @@ def rename_songs(old_name, song_name, destination, song_path):
             else:
                 continue
 
-# u search_folder napraviti izmjenu da se traže pjesme iz liste i spremaju se putanje za kopiranje
-# napraviti rename funkciju koja će na temelju liste preimenovati nazive pjesama
+#napraviti još test setova koji će još više izuzetaka imati kako bi poboljšao skriptu
 
+# dodati if __name__ = main
+if __name__ == "__main__":
+    # parse CLI args
+    args = parser.parse_args()
+    
+    # run the search, copy and rename method
+    search_folder(args.destination, args.songlist)
 
 #search_folder("E:\Glazba\Audioslave\(2002) Audioslave","Like A Stone", "F:\\test_folder_py")
-search_folder("F:\\test_folder_py")
+#search_folder("F:\\test_folder_py")
 #a, b, c, d = parse_song_list("P:\Git\Copy_Paste_app_python\Copy_paste_app_python\song_list.txt")
 #print(f'song: {a}\nartist: {b}\nalbum: {c}\nnumbers: {d}')
 
