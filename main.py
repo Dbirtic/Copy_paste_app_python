@@ -17,7 +17,7 @@ parser.add_argument(
     "--destination", 
     type=str, 
     required=True, 
-    help="destination to folder where the songs will be copies"
+    help="destination to folder where the songs will be copied"
 )
 parser.add_argument(
     "-l",
